@@ -1,0 +1,64 @@
+CREATE TABLE Attendance(
+    StudentID INT,
+    Date DATE,
+    Status VARCHAR(10)
+);
+
+<!DOCTYPE html>
+<html>
+<body>
+<h2>Student Attendance Form ✅</h2>
+
+<form action="AttendanceServlet" method="post">
+    Student ID: <input type="text" name="sid"><br><br>
+    Date: <input type="date" name="date"><br><br>
+    Status:
+    <select name="status">
+        <option>Present</option>
+        <option>Absent</option>
+    </select><br><br>
+
+    <input type="submit" value="Submit">
+</form>
+
+</body>
+</html>
+
+import java.io.*;
+import java.sql.*;
+import jakarta.servlet.*;
+import jakarta.servlet.http.*;
+
+public class AttendanceServlet extends HttpServlet {
+
+    protected void doPost(HttpServletRequest req, HttpServletResponse res)
+    throws ServletException, IOException {
+
+        res.setContentType("text/html");
+        PrintWriter out = res.getWriter();
+
+        String sid = req.getParameter("sid");
+        String date = req.getParameter("date");
+        String status = req.getParameter("status");
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection con = DriverManager.getConnection(
+            "jdbc:mysql://localhost:3306/college","root","password");
+
+            PreparedStatement pst = con.prepareStatement(
+            "INSERT INTO Attendance VALUES(?,?,?)");
+
+            pst.setInt(1, Integer.parseInt(sid));
+            pst.setString(2, date);
+            pst.setString(3, status);
+
+            pst.executeUpdate();
+
+            out.println("<h3>Attendance Submitted Successfully ✅</h3>");
+
+        } catch(Exception e) {
+            out.println("Error: " + e);
+        }
+    }
+}
