@@ -1,0 +1,126 @@
+public class Employee {
+    String name;
+    int age;
+    double salary;
+
+    public Employee(String name, int age, double salary) {
+        this.name = name;
+        this.age = age;
+        this.salary = salary;
+    }
+
+    @Override
+    public String toString() {
+        return name + " | Age: " + age + " | Salary: " + salary;
+    }
+}
+import java.util.*;
+
+public class EmployeeSortMain {
+    public static void main(String[] args) {
+        List<Employee> list = new ArrayList<>();
+        list.add(new Employee("Charu", 22, 45000));
+        list.add(new Employee("Amit", 25, 55000));
+        list.add(new Employee("Neha", 21, 50000));
+        list.add(new Employee("Rohan", 23, 47000));
+
+        System.out.println("\n--- Sort by Name (A-Z) ---");
+        list.sort((e1, e2) -> e1.name.compareTo(e2.name));
+        list.forEach(System.out::println);
+
+        System.out.println("\n--- Sort by Age (Ascending) ---");
+        list.sort((e1, e2) -> e1.age - e2.age);
+        list.forEach(System.out::println);
+
+        System.out.println("\n--- Sort by Salary (Descending) ---");
+        list.sort((e1, e2) -> Double.compare(e2.salary, e1.salary));
+        list.forEach(System.out::println);
+    }
+}public class Student {
+    String name;
+    double marks;
+
+    public Student(String name, double marks) {
+        this.name = name;
+        this.marks = marks;
+    }
+}
+
+import java.util.*;
+import java.util.stream.*;
+
+public class StudentStreamMain {
+    public static void main(String[] args) {
+        List<Student> students = Arrays.asList(
+            new Student("Charu", 85),
+            new Student("Rahul", 72),
+            new Student("Sneha", 92),
+            new Student("Aman", 65),
+            new Student("Riya", 78)
+        );
+
+        System.out.println("Students Scoring > 75% sorted by marks:");
+        students.stream()
+                .filter(s -> s.marks > 75)
+                .sorted((s1, s2) -> Double.compare(s1.marks, s2.marks))
+                .map(s -> s.name + " (" + s.marks + ")")
+                .forEach(System.out::println);
+    }
+}
+
+public class Product {
+    String name;
+    double price;
+    String category;
+
+    public Product(String name, double price, String category) {
+        this.name = name;
+        this.price = price;
+        this.category = category;
+    }
+}
+
+import java.util.*;
+import java.util.stream.*;
+import java.util.Map.Entry;
+
+public class ProductStreamMain {
+    public static void main(String[] args) {
+        List<Product> products = Arrays.asList(
+            new Product("Laptop", 60000, "Electronics"),
+            new Product("Mobile", 25000, "Electronics"),
+            new Product("Shoes", 2000, "Fashion"),
+            new Product("T-Shirt", 700, "Fashion"),
+            new Product("Fridge", 40000, "Electronics"),
+            new Product("Watch", 3000, "Fashion")
+        );
+
+        // Group by category
+        System.out.println("\n--- Products Grouped by Category ---");
+        Map<String, List<Product>> group = products.stream()
+                .collect(Collectors.groupingBy(p -> p.category));
+        System.out.println(group);
+
+        // Highest priced product per category
+        System.out.println("\n--- Most Expensive Product in Each Category ---");
+        Map<String, Optional<Product>> maxPrice = products.stream()
+                .collect(Collectors.groupingBy(
+                        p -> p.category,
+                        Collectors.maxBy((p1, p2) -> Double.compare(p1.price, p2.price))
+                ));
+        maxPrice.forEach((cat, prod) ->
+                System.out.println(cat + " -> " + prod.get().name + " : " + prod.get().price)
+        );
+
+        // Average price of all products
+        double avgPrice = products.stream()
+                .collect(Collectors.averagingDouble(p -> p.price));
+
+        System.out.println("\nAverage Price of Products: " + avgPrice);
+    }
+}
+
+
+
+
+
