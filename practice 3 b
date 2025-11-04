@@ -1,0 +1,56 @@
+CREATE TABLE Employee(
+    EmpID INT PRIMARY KEY,
+    Name VARCHAR(50),
+    Salary DOUBLE
+);
+
+
+import java.io.*;
+import java.sql.*;
+import jakarta.servlet.*;
+import jakarta.servlet.http.*;
+
+public class EmployeeServlet extends HttpServlet {
+
+    Connection con;
+
+    public void init() {
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            con = DriverManager.getConnection(
+                "jdbc:mysql://localhost:3306/college", "root", "password");
+        } catch(Exception e) { System.out.println(e); }
+    }
+
+    protected void doGet(HttpServletRequest req, HttpServletResponse res)
+    throws ServletException, IOException {
+
+        res.setContentType("text/html");
+        PrintWriter out = res.getWriter();
+
+        String empid = req.getParameter("empid");
+        try {
+            Statement st = con.createStatement();
+            ResultSet rs;
+
+            if(empid != null) {
+                rs = st.executeQuery("SELECT * FROM Employee WHERE EmpID=" + empid);
+                out.println("<h2>Employee Search Result</h2>");
+            } else {
+                rs = st.executeQuery("SELECT * FROM Employee");
+                out.println("<h2>Employee List</h2>");
+            }
+
+            out.println("<form method='get'>Search Employee ID: <input name='empid'><input type='submit' value='Search'></form><br>");
+            out.println("<table border='1'><tr><th>EmpID</th><th>Name</th><th>Salary</th></tr>");
+
+            while(rs.next()) {
+                out.println("<tr><td>"+rs.getInt(1)+"</td><td>"+rs.getString(2)+"</td><td>"+rs.getDouble(3)+"</td></tr>");
+            }
+            out.println("</table>");
+
+        } catch(Exception e) {
+            out.println("Error: " + e);
+        }
+    }
+}
